@@ -155,6 +155,43 @@ func main() {
 		log.Println(result)
 	}
 
+	//sort
+	log.Println("\n---------age >= 33 ------------------")
+	iter = c.Find(bson.M{"age": bson.M{"$gte": 33}}).Sort("age").Iter()
+	for iter.Next(&result) {
+		log.Println(result)
+	}
+
+	//Limit
+	log.Println("\n---------age >= 20 , 5 records------------------")
+	iter = c.Find(bson.M{"age": bson.M{"$gte": 20}}).Sort("age").Limit(5).Iter()
+	for iter.Next(&result) {
+		log.Println(result)
+	}
+
+	//Skip
+	log.Println("\n---------age >= 20 , skip 2 records, then get 5 records------------------")
+	iter = c.Find(bson.M{"age": bson.M{"$gte": 20}}).Sort("age").Skip(2).Limit(5).Iter()
+	for iter.Next(&result) {
+		log.Println(result)
+	}
+
+	//Count
+	log.Println("\n---------age >= 20 , skip 2 records, then get 5 records------------------")
+	recordsCount, err := c.Find(bson.M{"age": bson.M{"$gte": 20}}).Count()
+	log.Println("Records count:", recordsCount)
+
+	//Select
+	log.Println("\n---------age >= 20 , skip 2 records, then get 5 records------------------")
+	type User struct {
+		Name string
+	}
+	var users []User
+	c.Find(bson.M{"age": bson.M{"$gte": 20}}).Sort("age").Select(bson.M{"name": 1}).All(&users)
+	for _, item := range users {
+		log.Println(item)
+	}
+
 	/*
 		//Find all collections
 		iter = QueryAll(session, "test", "people", nil)
